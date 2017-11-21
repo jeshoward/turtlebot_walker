@@ -1,9 +1,3 @@
-./src/turtlebot_walker.h:46:  Include the directory when naming .h files  [build/include_subdir] [4]
-./src/turtlebot_walker.h:55:  Single-parameter constructors should be marked explicit.  [runtime/explicit] [5]
-./src/turtlebot_walker.h:111:  Tab found; better to use spaces  [whitespace/tab] [1]
-./src/turtlebot_walker.h:111:  Line ends in whitespace.  Consider deleting these extra spaces.  [whitespace/end_of_line] [4]
-./src/turtlebot_walker.h:114:  At least two spaces is best between code and comments  [whitespace/comments] [2]
-./src/turtlebot_walker.h:114:  Could not find a newline character at the end of the file.  [whitespace/ending_newline] [5]
 Done processing ./src/turtlebot_walker.h
 ./src/turtlebot_walker.cc:38:  Include the directory when naming .h files  [build/include_subdir] [4]
 ./src/turtlebot_walker.cc:40:  Lines should be <= 80 characters long  [whitespace/line_length] [2]
@@ -113,4 +107,4 @@ Done processing ./src/turtlebot_walker.h
 ./src/turtlebot_walker.cc:138:  Tab found; better to use spaces  [whitespace/tab] [1]
 ./src/turtlebot_walker.cc:139:  Could not find a newline character at the end of the file.  [whitespace/ending_newline] [5]
 Done processing ./src/turtlebot_walker.cc
-Total errors found: 113
+Total errors found: 107

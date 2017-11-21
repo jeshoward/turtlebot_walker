@@ -1,5 +1,5 @@
 /*
- * 
+ * @copyright Copyright (C) 2017, Jessica Howard 
  * @author Jessica Howard
  * @file turtlebot_walker/src/turtlebot_walker.cc
  * @brief Algorithm to make the turtlebot move around a gazebo workspace
@@ -9,7 +9,7 @@
  * get bored of watching.
  *
  * 
- * @copyright Copyright (C) 2017, Jessica Howard
+ * 
  * @license 3-Clause BSD License
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -35,79 +35,81 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TURTLEBOTWALKER_CLASS_H_
-#define TURTLEBOTWALKER_CLASS_H_
+#ifndef SRC_TURTLEBOT_WALKER_H_
+#define SRC_TURTLEBOT_WALKER_H_
 
+#include <cmath>
 #include "ros/ros.h"
 #include "geometry_msgs/Twist.h"
 #include "sensor_msgs/LaserScan.h"
 #include "nav_msgs/Odometry.h"
 #include "tf/tf.h"
-#include "math.h"
+
 #include "ros/console.h"
 
 class TurtlebotWalker {
-public:
-	/*
+ public:
+    /*
 	 * @brief constructor for the TurtlebotWalker
 	 * @param Takes a node handle
 	 */
-	TurtlebotWalker(ros::NodeHandle* node_handle);
+    explicit TurtlebotWalker(ros::NodeHandle* node_handle);
 
-private:
+ private:
 	/*
 	 * @brief node handle
 	 */
-	ros::NodeHandle node_handle_;
-	
+    ros::NodeHandle node_handle_;
+
 	/*
 	 * @brief initialize subscribers to scan and odom
 	 */
-	void initialize_subscribers();
-	
+    void initialize_subscribers();
+
 	/*
 	 * @brief initialize publisher to cmd_vel_mux/input/teleop
 	 */
-	void initialize_publishers();
-	
+    void initialize_publishers();
+
 	/*
 	 * @brief callback function for the laser scanner
 	 */
-	void scan_callback(const sensor_msgs::LaserScan::ConstPtr & scan_message);
-	
+    void scan_callback(const sensor_msgs::LaserScan::ConstPtr & scan_message);
+
 	/*
 	 * @brief Callback for the position and velocity message
 	 */
-	void pose_callback(const nav_msgs::Odometry::ConstPtr & pose_message);
-	
+    void pose_callback(const nav_msgs::Odometry::ConstPtr & pose_message);
+
 	/*
 	 * @brief Scan message to get distances to objects
 	 */
-	sensor_msgs::LaserScan scan_message_;
-	
+    sensor_msgs::LaserScan scan_message_;
+
 	/*
 	 * @brief Twist message to change velocities
 	 */
-	geometry_msgs::Twist velocity_message_;
+    geometry_msgs::Twist velocity_message_;
 
 	/*
 	 * @brief Publisher for velocity messages
 	 */
-	ros::Publisher velocity_publisher_;
-	
+    ros::Publisher velocity_publisher_;
+
 	/*
 	 * @brief Subscriber for scan messages
 	 */
-	ros::Subscriber scan_subscriber_;
-	
+    ros::Subscriber scan_subscriber_;
+
 	/*
 	 * @brief Subscriber for odometry poses
 	 */
-	ros::Subscriber pose_subscriber_;
+    ros::Subscriber pose_subscriber_;
+
 	/*
 	 * @brief Position and velocity messages
 	 */
-	nav_msgs::Odometry odometry_pose_;	
+    nav_msgs::Odometry odometry_pose_;
 };
 
-#endif
+#endif  // SRC_TURTLEBOT_WALKER_H_
