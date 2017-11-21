@@ -100,6 +100,7 @@ To play the bag you've just recorded, enter the following:
 ```
 rosbag play <rosbag_file_name>
 ```
+Please note that you cannot play the rosbag file while Gazebo is still running.
 
 To merely inspect the rosbag to find out information about what topics and types it recorded:
 ```
