@@ -1,0 +1,13 @@
+<launch>
+	<arg name="record_bag" default="false"/>
+	<param name="/use_sim_time" value="true"/>
+	
+	<group if="$(arg record_bag)">
+		<node pkg="rosbag" type="record" name="turtlebot_walker_bag" output="screen"
+			args="-o $(find turtlebot_walker)/results/ -a -x (/camera(.*)) --duration=30"/>
+	</group>	
+	
+		<include file="$(find turtlebot_gazebo)/launch/turtlebot_world.launch"/>
+		<node name="turtlebot_walker" pkg="turtlebot_walker" type="turtlebot_walker" output="screen"/>
+
+</launch>
