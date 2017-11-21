@@ -1,3 +1,2 @@
-(information) Couldn't find path given by -I '/home/jessica/catkin_ws/devel/include/'
+Checking src/turtlebot_walker.cc...
 [/opt/ros/kinetic/include/ros/console.h:46]: (information) Include file: "log4cxx/level.h" not found.
-[src/turtlebot_walker.h:46]: (information) Include file: "math.h" not found.
