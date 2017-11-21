@@ -35,42 +35,49 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ros/ros.h"
-#include "geometry_msgs/Twist.h"
-#include "sensor_msgs/LaserScan.h"
-#include "nav_msgs/Odometry.h"
-#include "tf/tf.h"
-#include "math.h"
-#include "ros/console.h"
-//Scan message to get distances to objects
-sensor_msgs::LaserScan scan_message_;
+#include "turtlebot_walker.h"
 
-//Twist message to change velocities
-geometry_msgs::Twist velocity_message_;
+TurtlebotWalker::TurtlebotWalker(ros::NodeHandle* node_handle) : node_handle_(*node_handle) {
+	ROS_INFO("Constructing TurtlebotWalker");
+	
+	//Initialize our publishers and subscribers
+	initialize_subscribers();
+	initialize_publishers();
+	
+	//Set default velocity values
+	velocity_message_.linear.x = 0;
+	velocity_message_.linear.y = 0;
+	velocity_message_.linear.z = 0;
+	velocity_message_.angular.x = 0;
+	velocity_message_.angular.y = 0;
+	velocity_message_.angular.z = 0;
+	
 
-//Publisher for velocity messages
-ros::Publisher velocity_publisher_;
+}
 
-//Subscriber to receive laser scan messages
-ros::Subscriber scan_subscriber_;
+void TurtlebotWalker::initialize_subscribers() {
+	ROS_INFO("Initializing TurtlebotWalker subscribers.");
+	//Subscribe to the laser scanner
+	scan_subscriber_ = node_handle_.subscribe("scan", 10, 
+											  &TurtlebotWalker::scan_callback, this);
+	
+	//Subscribe to the odometry to get the robot's position and velocity
+	pose_subscriber_ = node_handle_.subscribe("odom", 10, 
+											  &TurtlebotWalker::pose_callback, this);
+		
+}
 
-//Subscriber to receive robot position
-ros::Subscriber pose_subscriber_;
-
-//Position and velocity messages
-nav_msgs::Odometry odometry_pose_;
-
-//Callback for the laser scan
-void scan_callback(sensor_msgs::LaserScan::ConstPtr & scan_message);
-
-//Callback for the position and velocity message
-void pose_callback(const nav_msgs::Odometry::ConstPtr & pose_message);
-
+void TurtlebotWalker::initialize_publishers() {
+	ROS_INFO("Initializing TurtlebotWalker publishers.");
+	//Register the velocity publisher
+	velocity_publisher_ = node_handle_.advertise<geometry_msgs::Twist>
+		("/cmd_vel_mux/input/teleop", 1000, true);	
+}
 
 /* 
  * @brief Callback for the laser scan
  */
-void scan_callback(const sensor_msgs::LaserScan::ConstPtr & scan_message) {
+void TurtlebotWalker::scan_callback(const sensor_msgs::LaserScan::ConstPtr & scan_message) {
 	scan_message_.ranges = scan_message->ranges;
 	
 	float min_range = scan_message_.ranges[0];
@@ -106,43 +113,28 @@ void scan_callback(const sensor_msgs::LaserScan::ConstPtr & scan_message) {
 /* 
  * @brief Callback for the position and velocity message 
  */
-void pose_callback(const nav_msgs::Odometry::ConstPtr & pose_message) {
+void TurtlebotWalker::pose_callback(const nav_msgs::Odometry::ConstPtr & pose_message) {
 	//Save our robot's current position
-	odometry_pose_.pose.pose.position.x = pose_message->pose.pose.position.x;
-	odometry_pose_.pose.pose.position.y = pose_message->pose.pose.position.y;
-	odometry_pose_.pose.pose.position.z = pose_message->pose.pose.position.z;
+	TurtlebotWalker::odometry_pose_.pose.pose.position.x = pose_message->pose.pose.position.x;
+	TurtlebotWalker::odometry_pose_.pose.pose.position.y = pose_message->pose.pose.position.y;
+	TurtlebotWalker::odometry_pose_.pose.pose.position.z = pose_message->pose.pose.position.z;
 	
 	//Save our robot's current orientation
-	odometry_pose_.pose.pose.orientation.w = pose_message->pose.pose.orientation.w;
-	odometry_pose_.pose.pose.orientation.x = pose_message->pose.pose.orientation.x;
-	odometry_pose_.pose.pose.orientation.y = pose_message->pose.pose.orientation.y;
-	odometry_pose_.pose.pose.orientation.z = pose_message->pose.pose.orientation.z;
+	TurtlebotWalker::odometry_pose_.pose.pose.orientation.w = pose_message->pose.pose.orientation.w;
+	TurtlebotWalker::odometry_pose_.pose.pose.orientation.x = pose_message->pose.pose.orientation.x;
+	TurtlebotWalker::odometry_pose_.pose.pose.orientation.y = pose_message->pose.pose.orientation.y;
+	TurtlebotWalker::odometry_pose_.pose.pose.orientation.z = pose_message->pose.pose.orientation.z;
 }
 
 int main(int argc, char **argv) {
-	ROS_INFO("Initiating walker.");
+	ROS_INFO("Initiating TurtlebotWalker.");
 	//Initiate our turtlebot_walker
 	ros::init(argc, argv, "turtlebot_walker");
 	ros::NodeHandle node_handle;
 	
-	//Subscribe to the laser scanner
-	scan_subscriber_ = node_handle.subscribe("scan", 10, scan_callback);
-	
-	//Subscribe to the odometry to get the robot's position and velocity
-	pose_subscriber_ = node_handle.subscribe("odom", 10, pose_callback);
-	
-	//Register the velocity publisher
-	velocity_publisher_ = node_handle.advertise<geometry_msgs::Twist>
-		("/cmd_vel_mux/input/teleop", 1000);
+	//Create our TurtlebotWalker
+	TurtlebotWalker turtle(&node_handle);	
 
-	//Set default velocity values
-	velocity_message_.linear.x = 0;
-	velocity_message_.linear.y = 0;
-	velocity_message_.linear.z = 0;
-	velocity_message_.angular.x = 0;
-	velocity_message_.angular.y = 0;
-	velocity_message_.angular.z = 0;
-	
 	ros::spin();
 	
 	return 0;
